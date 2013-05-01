@@ -20,3 +20,6 @@ Generates following svg files:
 ![2](https://raw.github.com/kallaballa/PixelStencil/master/images/2.png)
 ![3](https://raw.github.com/kallaballa/PixelStencil/master/images/3.png)
 
+## OS X Branch
+
+Builds fine on Mountain Lion using XCode 4.6.2. Requires [XQuartz](http://xquartz.macosforge.org).
