@@ -42,6 +42,57 @@ PixelPlanes::PixelPlanes(char* filename) : img(filename), width(img.width()), he
 PixelPlanes::~PixelPlanes() {
 }
 
+SVGStencil::SVGStencil(const char* filename, size_t width, size_t height, size_t rectWidth, size_t rectMargin, size_t boardMargin) :
+	ofs(filename),
+	rectWidthMM(rectWidth * PIXEL_TO_MM),
+	rectMarginMM(rectMargin * PIXEL_TO_MM),
+	boardMarginMM(boardMargin * PIXEL_TO_MM) {
+	writeHeader(
+			width * rectWidthMM + width * rectMarginMM + boardMargin * PIXEL_TO_MM * 2,
+			height * rectWidthMM + height * rectMarginMM + boardMargin * PIXEL_TO_MM * 2);
+}
+
+SVGStencil::~SVGStencil() {
+	writeFooter();
+	this->ofs.close();
+}
+
+void SVGStencil::writeHeader(size_t widthMM, size_t heightMM) {
+	this->ofs << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"<< std::endl;
+	this->ofs << "<svg " << std::endl;
+	this->ofs << "xmlns:dc=\"http://purl.org/dc/elements/1.1/\"" << std::endl;
+	this->ofs << "xmlns:cc=\"http://creativecommons.org/ns#\"" << std::endl;
+	this->ofs << "xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"" << std::endl;
+	this->ofs << "xmlns:svg=\"http://www.w3.org/2000/svg\"" << std::endl;
+	this->ofs << "xmlns=\"http://www.w3.org/2000/svg\"" << std::endl;
+	this->ofs << "version=\"1.1\"" << std::endl;
+	this->ofs << "width=\"" << widthMM << "\"" << std::endl;
+	this->ofs << "height=\"" << heightMM << "\"" << std::endl;
+	this->ofs << "id=\"svg2\">" << std::endl;
+	this->ofs << "<g id=\"layer1\">" << std::endl;
+
+	this->ofs << "<rect" << std::endl;
+	this->ofs << "width=\"" << widthMM << "\"" << std::endl;
+	this->ofs << "height=\"" << heightMM << "\"" << std::endl;
+	this->ofs << "x=\"0\"" << std::endl;
+	this->ofs << "y=\"0\"" << std::endl;
+	this->ofs << "id=\"-1\"" << std::endl;
+	this->ofs << "style=\"fill:none;stroke:#ff0000;stroke-width:0.09;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none\" />" << std::endl;
+}
+
+void SVGStencil::writeFooter() {
+	this->ofs << "</g></svg>" << std::endl;
+}
+
+void SVGStencil::writePixel(size_t x, size_t y) {
+	this->ofs << "<rect" << std::endl;
+	this->ofs << "width=\"" << rectWidthMM << "\"" << std::endl;
+	this->ofs << "height=\"" << rectWidthMM << "\"" << std::endl;
+	this->ofs << "x=\"" << boardMarginMM + rectWidthMM * x + rectMarginMM * x << "\"" << std::endl;
+	this->ofs << "y=\"" << boardMarginMM + rectWidthMM * y + rectMarginMM * y << "\"" << std::endl;
+	this->ofs << "id=\"" << rectID++ << "\"" << std::endl;
+	this->ofs << "style=\"fill:none;stroke:#ff0000;stroke-width:0.09;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none\" />" << std::endl;
+}
 } /* namespace kallaballa */
 
 int main(int argc, char** argv) {
