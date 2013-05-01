@@ -4,7 +4,7 @@ PixelStencil
 Create laser cut models for spray paint stencils from pixel graphics
 
 ##Build
-Install **libboost-all-dev** and execute **make**
+Install **libx11-dev**, **libboost-all-dev** and execute **make**
 
 ##Usage
 For each color found in the input image a svg file is generated and each pixel is converted into a rectangle.
