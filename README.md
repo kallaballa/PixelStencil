@@ -1,4 +1,5 @@
 PixelStencil
 ============
 
-Create spray paint stencils from pixel graphics
+Create laser cut models for spray paint stencils from pixel graphics
+
