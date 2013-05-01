@@ -1,9 +1,22 @@
 /*
- * PixelStencil.hpp
+ * PixelStencil
+ * Copyright (C) 2013 Amir Hassan <amir@viel-zu.org>
  *
- *  Created on: Apr 30, 2013
- *      Author: elchaschab
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 
 #ifndef PIXELSTENCIL_HPP_
 #define PIXELSTENCIL_HPP_
@@ -78,6 +91,14 @@ class SVGStencil {
 		this->ofs << "height=\"" << heightMM << "\"" << std::endl;
 		this->ofs << "id=\"svg2\">" << std::endl;
 		this->ofs << "<g id=\"layer1\">" << std::endl;
+
+		this->ofs << "<rect" << std::endl;
+		this->ofs << "width=\"" << widthMM << "\"" << std::endl;
+		this->ofs << "height=\"" << heightMM << "\"" << std::endl;
+		this->ofs << "x=\"0\"" << std::endl;
+		this->ofs << "y=\"0\"" << std::endl;
+		this->ofs << "id=\"-1\"" << std::endl;
+		this->ofs << "style=\"fill:none;stroke:#ff0000;stroke-width:0.09;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none\" />" << std::endl;
 	}
 
 	void writeFooter() {
@@ -106,7 +127,7 @@ public:
 		this->ofs << "x=\"" << boardMarginMM + rectWidthMM * x + rectMarginMM * x << "\"" << std::endl;
 		this->ofs << "y=\"" << boardMarginMM + rectWidthMM * y + rectMarginMM * y << "\"" << std::endl;
 		this->ofs << "id=\"" << rectID++ << "\"" << std::endl;
-		this->ofs << "style=\"fill:none;stroke:#000000;stroke-width:0.09;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none\" />" << std::endl;
+		this->ofs << "style=\"fill:none;stroke:#ff0000;stroke-width:0.09;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none\" />" << std::endl;
 	}
 };
 }
