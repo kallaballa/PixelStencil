@@ -105,9 +105,9 @@ int main(int argc, char** argv) {
 	}
 
 	PixelPlanes pp(argv[1]);
-	size_t pixelWidth = lexical_cast<size_t>(argv[2]);
-	size_t pixelMargin = lexical_cast<size_t>(argv[3]);
-	size_t boardMargin = lexical_cast<size_t>(argv[4]);
+	size_t rectWidthPix = lexical_cast<size_t>(argv[2]);
+	size_t rectMarginPix = lexical_cast<size_t>(argv[3]);
+	size_t boardMarginPix = lexical_cast<size_t>(argv[4]);
 
 	int i = 0;
 	for(auto it = pp.begin(); it != pp.end(); ++it) {
@@ -115,9 +115,9 @@ int main(int argc, char** argv) {
 		SVGStencil stencil((string(argv[1]) + (boost::format("%d.svg") % i).str()).c_str(),
 				pp.getWidth(),
 				pp.getHeight(),
-				pixelWidth,
-				pixelMargin,
-				boardMargin);
+				rectWidthPix,
+				rectMarginPix,
+				boardMarginPix);
 
 		for(auto it_l = pl.begin(); it_l != pl.end(); ++it_l) {
 			stencil.writePixel((*it_l).first, (*it_l).second);
