@@ -112,7 +112,7 @@ int main(int argc, char** argv) {
 	int i = 0;
 	for(auto it = pp.begin(); it != pp.end(); ++it) {
 		PixelList& pl = (*it).second;
-		SVGStencil stencil((boost::format("%d.svg") % i).str().c_str(),
+		SVGStencil stencil((string(argv[1]) + (boost::format("%d.svg") % i).str()).c_str(),
 				pp.getWidth(),
 				pp.getHeight(),
 				pixelWidth,
