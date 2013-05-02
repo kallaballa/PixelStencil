@@ -43,7 +43,7 @@ typedef std::pair<int32_t,int32_t> Pixel;
 typedef std::vector<Pixel> PixelList;
 typedef std::map<long, std::vector<Pixel> > PixelMap;
 
-float PIXEL_TO_MM = 3.52112676056;
+float PIXEL_TO_MM = 3.5434;
 
 class PixelPlanes {
 	CImg<sample_t> img;
@@ -75,9 +75,9 @@ public:
 
 class SVGStencil {
 	std::ofstream ofs;
-	size_t rectWidthMM = 20;
-	size_t rectMarginMM = 20;
-	size_t boardMarginMM = 20;
+	size_t rectWidthPix = 20;
+	size_t rectMarginPix = 20;
+	size_t boardMarginPix = 20;
 	size_t rectID = 0;
 
 	void writeHeader(size_t widthMM, size_t heightMM);

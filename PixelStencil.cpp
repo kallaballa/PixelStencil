@@ -28,7 +28,6 @@ namespace kallaballa {
 PixelPlanes::PixelPlanes(char* filename) : img(filename), width(img.width()), height(img.height()) {
 	for (int h = 0; h < img.height(); h++) {
 		for (int w = 0; w < img.width(); w++) {
-
 	    	long p = 0;
 	    	p |= img(w, h, 0, 0) << 16;
 	    	p |= img(w, h, 0, 1) << 8;
@@ -42,14 +41,14 @@ PixelPlanes::PixelPlanes(char* filename) : img(filename), width(img.width()), he
 PixelPlanes::~PixelPlanes() {
 }
 
-SVGStencil::SVGStencil(const char* filename, size_t width, size_t height, size_t rectWidth, size_t rectMargin, size_t boardMargin) :
+SVGStencil::SVGStencil(const char* filename, size_t widthPix, size_t heightPix, size_t rectWidthMM, size_t rectMarginMM, size_t boardMarginMM) :
 	ofs(filename),
-	rectWidthMM(rectWidth * PIXEL_TO_MM),
-	rectMarginMM(rectMargin * PIXEL_TO_MM),
-	boardMarginMM(boardMargin * PIXEL_TO_MM) {
+	rectWidthPix(rectWidthMM * PIXEL_TO_MM),
+	rectMarginPix(rectMarginMM * PIXEL_TO_MM),
+	boardMarginPix(boardMarginMM * PIXEL_TO_MM) {
 	writeHeader(
-			width * rectWidthMM + width * rectMarginMM + boardMargin * PIXEL_TO_MM * 2,
-			height * rectWidthMM + height * rectMarginMM + boardMargin * PIXEL_TO_MM * 2);
+			widthPix * rectWidthPix + widthPix * rectMarginPix + boardMarginPix * 2,
+			heightPix * rectWidthPix + heightPix * rectMarginPix + boardMarginPix * 2);
 }
 
 SVGStencil::~SVGStencil() {
@@ -57,7 +56,7 @@ SVGStencil::~SVGStencil() {
 	this->ofs.close();
 }
 
-void SVGStencil::writeHeader(size_t widthMM, size_t heightMM) {
+void SVGStencil::writeHeader(size_t widthPix, size_t heightPix) {
 	this->ofs << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"<< std::endl;
 	this->ofs << "<svg " << std::endl;
 	this->ofs << "xmlns:dc=\"http://purl.org/dc/elements/1.1/\"" << std::endl;
@@ -66,14 +65,14 @@ void SVGStencil::writeHeader(size_t widthMM, size_t heightMM) {
 	this->ofs << "xmlns:svg=\"http://www.w3.org/2000/svg\"" << std::endl;
 	this->ofs << "xmlns=\"http://www.w3.org/2000/svg\"" << std::endl;
 	this->ofs << "version=\"1.1\"" << std::endl;
-	this->ofs << "width=\"" << widthMM << "\"" << std::endl;
-	this->ofs << "height=\"" << heightMM << "\"" << std::endl;
+	this->ofs << "width=\"" << widthPix << "\"" << std::endl;
+	this->ofs << "height=\"" << heightPix << "\"" << std::endl;
 	this->ofs << "id=\"svg2\">" << std::endl;
 	this->ofs << "<g id=\"layer1\">" << std::endl;
 
 	this->ofs << "<rect" << std::endl;
-	this->ofs << "width=\"" << widthMM << "\"" << std::endl;
-	this->ofs << "height=\"" << heightMM << "\"" << std::endl;
+	this->ofs << "width=\"" << widthPix << "\"" << std::endl;
+	this->ofs << "height=\"" << heightPix << "\"" << std::endl;
 	this->ofs << "x=\"0\"" << std::endl;
 	this->ofs << "y=\"0\"" << std::endl;
 	this->ofs << "id=\"-1\"" << std::endl;
@@ -86,10 +85,10 @@ void SVGStencil::writeFooter() {
 
 void SVGStencil::writePixel(size_t x, size_t y) {
 	this->ofs << "<rect" << std::endl;
-	this->ofs << "width=\"" << rectWidthMM << "\"" << std::endl;
-	this->ofs << "height=\"" << rectWidthMM << "\"" << std::endl;
-	this->ofs << "x=\"" << boardMarginMM + rectWidthMM * x + rectMarginMM * x << "\"" << std::endl;
-	this->ofs << "y=\"" << boardMarginMM + rectWidthMM * y + rectMarginMM * y << "\"" << std::endl;
+	this->ofs << "width=\"" << rectWidthPix << "\"" << std::endl;
+	this->ofs << "height=\"" << rectWidthPix << "\"" << std::endl;
+	this->ofs << "x=\"" << boardMarginPix + rectWidthPix * x + rectMarginPix * x << "\"" << std::endl;
+	this->ofs << "y=\"" << boardMarginPix + rectWidthPix * y + rectMarginPix * y << "\"" << std::endl;
 	this->ofs << "id=\"" << rectID++ << "\"" << std::endl;
 	this->ofs << "style=\"fill:none;stroke:#ff0000;stroke-width:0.09;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none\" />" << std::endl;
 }
@@ -98,6 +97,7 @@ void SVGStencil::writePixel(size_t x, size_t y) {
 int main(int argc, char** argv) {
 	using namespace cimg_library;
 	using namespace kallaballa;
+	using namespace boost;
 
 	if(argc != 5) {
 		std::cerr << "Usage: PixelStencil <img file> <pixel width mm> <pixel margin mm> <board margin mm>" << std::endl;
@@ -105,9 +105,9 @@ int main(int argc, char** argv) {
 	}
 
 	PixelPlanes pp(argv[1]);
-	size_t pixelWidth = boost::lexical_cast<size_t>(argv[2]);
-	size_t pixelMargin = boost::lexical_cast<size_t>(argv[3]);
-	size_t boardMargin = boost::lexical_cast<size_t>(argv[4]);
+	size_t pixelWidth = lexical_cast<size_t>(argv[2]);
+	size_t pixelMargin = lexical_cast<size_t>(argv[3]);
+	size_t boardMargin = lexical_cast<size_t>(argv[4]);
 
 	int i = 0;
 	for(auto it = pp.begin(); it != pp.end(); ++it) {
