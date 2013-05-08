@@ -2,9 +2,17 @@ TARGET  := pixelStencil
 SRCS    := PixelStencil.cpp
 OBJS    := ${SRCS:.cpp=.o} 
 DEPS    := ${SRCS:.cpp=.dep} 
-    
-CXXFLAGS = -std=c++0x -pedantic -Wall
-LDFLAGS = -L/usr/lib64/
+
+UNAME := $(shell uname)
+
+ifeq ($(UNAME), Darwin)
+	CXXFLAGS = -std=c++0x -pedantic -Wall -I /usr/X11/include/
+	LDFLAGS = -L/usr/X11/lib/
+else
+	CXXFLAGS = -std=c++0x -pedantic -Wall
+	LDFLAGS = -L/usr/lib64/
+endif
+
 LIBS    = -lX11 -lpthread
 
 .PHONY: all clean distclean 
