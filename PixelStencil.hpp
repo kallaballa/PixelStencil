@@ -21,6 +21,7 @@
 #ifndef PIXELSTENCIL_HPP_
 #define PIXELSTENCIL_HPP_
 
+#define cimg_display 0
 #include "CImg.h"
 #include <stdint.h>
 #include <string>
@@ -28,7 +29,6 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include <boost/format.hpp>
 
 namespace kallaballa
 {

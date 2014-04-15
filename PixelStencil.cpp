@@ -21,17 +21,16 @@
 #include <iostream>
 #include "math.h"
 #include "CImg.h"
-#include "boost/lexical_cast.hpp"
 
 namespace kallaballa {
 
 PixelPlanes::PixelPlanes(char* filename) : img(filename), width(img.width()), height(img.height()) {
 	for (int h = 0; h < img.height(); h++) {
 		for (int w = 0; w < img.width(); w++) {
-	    	long p = 0;
-	    	p |= img(w, h, 0, 0) << 16;
-	    	p |= img(w, h, 0, 1) << 8;
-	    	p |= img(w, h, 0, 2);
+			long p = 0;
+			p |= img(w, h, 0, 0) << 16;
+			p |= img(w, h, 0, 1) << 8;
+			p |= img(w, h, 0, 2);
 
 			planes[p].push_back({w,h});
 		}
@@ -97,7 +96,6 @@ void SVGStencil::writePixel(size_t x, size_t y) {
 int main(int argc, char** argv) {
 	using namespace cimg_library;
 	using namespace kallaballa;
-	using namespace boost;
 
 	if(argc != 5) {
 		std::cerr << "Usage: PixelStencil <img file> <pixel width mm> <pixel margin mm> <board margin mm>" << std::endl;
@@ -105,19 +103,19 @@ int main(int argc, char** argv) {
 	}
 
 	PixelPlanes pp(argv[1]);
-	size_t rectWidthPix = lexical_cast<size_t>(argv[2]);
-	size_t rectMarginPix = lexical_cast<size_t>(argv[3]);
-	size_t boardMarginPix = lexical_cast<size_t>(argv[4]);
+	size_t rectWidthMM = atoi(argv[2]);
+	size_t rectMarginMM = atoi(argv[3]);
+	size_t boardMarginMM = atoi(argv[4]);
 
 	int i = 0;
 	for(auto it = pp.begin(); it != pp.end(); ++it) {
 		PixelList& pl = (*it).second;
-		SVGStencil stencil((string(argv[1]) + (boost::format("%d.svg") % i).str()).c_str(),
+		SVGStencil stencil((string(argv[1]) + std::to_string(i) + ".svg").c_str(),
 				pp.getWidth(),
 				pp.getHeight(),
-				rectWidthPix,
-				rectMarginPix,
-				boardMarginPix);
+				rectWidthMM,
+				rectMarginMM,
+				boardMarginMM);
 
 		for(auto it_l = pl.begin(); it_l != pl.end(); ++it_l) {
 			stencil.writePixel((*it_l).first, (*it_l).second);

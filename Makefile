@@ -1,4 +1,11 @@
+ifdef JAVASCRIPT
+CXX     := em++
+endif
+ifdef JAVASCRIPT
+TARGET  := pixelStencil.js
+else
 TARGET  := pixelStencil 
+endif
 SRCS    := PixelStencil.cpp
 OBJS    := ${SRCS:.cpp=.o} 
 DEPS    := ${SRCS:.cpp=.dep} 
