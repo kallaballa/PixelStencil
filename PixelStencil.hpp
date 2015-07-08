@@ -41,7 +41,8 @@ using std::ostream;
 typedef unsigned char sample_t;
 typedef std::pair<int32_t,int32_t> Pixel;
 typedef std::vector<Pixel> PixelList;
-typedef std::map<long, std::vector<Pixel> > PixelMap;
+typedef uint32_t Color;
+typedef std::map<Color, std::vector<Pixel> > PixelMap;
 
 float PIXEL_TO_MM = 3.5434;
 
@@ -75,15 +76,18 @@ public:
 
 class SVGStencil {
 	std::ofstream ofs;
-	size_t rectWidthPix = 20;
-	size_t rectMarginPix = 20;
-	size_t boardMarginPix = 20;
-	size_t rectID = 0;
+	Color color;
+	size_t rectWidthPix;
+	size_t rectMarginPix;
+	size_t boardMarginPix;
+  size_t realWidthPix;
+  size_t realHeightPix;
+  size_t rectID = 0;
 
-	void writeHeader(size_t widthMM, size_t heightMM);
+	void writeHeader();
 	void writeFooter();
 public:
-	SVGStencil(const char* filename, size_t width, size_t height, size_t rectWidth, size_t rectMargin, size_t boardMargin) ;
+	SVGStencil(const char* filename, Color color, size_t width, size_t height, size_t rectWidth, size_t rectMargin, size_t boardMargin) ;
 	virtual ~SVGStencil();
 
 	void writePixel(size_t x, size_t y);

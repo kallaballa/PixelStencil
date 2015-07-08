@@ -27,7 +27,7 @@ namespace kallaballa {
 PixelPlanes::PixelPlanes(char* filename) : img(filename), width(img.width()), height(img.height()) {
 	for (int h = 0; h < img.height(); h++) {
 		for (int w = 0; w < img.width(); w++) {
-			long p = 0;
+			Color p = 0;
 			p |= img(w, h, 0, 0) << 16;
 			p |= img(w, h, 0, 1) << 8;
 			p |= img(w, h, 0, 2);
@@ -40,14 +40,15 @@ PixelPlanes::PixelPlanes(char* filename) : img(filename), width(img.width()), he
 PixelPlanes::~PixelPlanes() {
 }
 
-SVGStencil::SVGStencil(const char* filename, size_t widthPix, size_t heightPix, size_t rectWidthMM, size_t rectMarginMM, size_t boardMarginMM) :
+SVGStencil::SVGStencil(const char* filename, Color color, size_t widthPix, size_t heightPix, size_t rectWidthMM, size_t rectMarginMM, size_t boardMarginMM) :
 	ofs(filename),
+	color(color),
 	rectWidthPix(rectWidthMM * PIXEL_TO_MM),
 	rectMarginPix(rectMarginMM * PIXEL_TO_MM),
-	boardMarginPix(boardMarginMM * PIXEL_TO_MM) {
-	writeHeader(
-			widthPix * rectWidthPix + widthPix * rectMarginPix + boardMarginPix * 2,
-			heightPix * rectWidthPix + heightPix * rectMarginPix + boardMarginPix * 2);
+	boardMarginPix(boardMarginMM * PIXEL_TO_MM),
+	realWidthPix(widthPix * rectWidthPix + widthPix * rectMarginPix + boardMarginPix * 2),
+	realHeightPix(heightPix * rectWidthPix + heightPix * rectMarginPix + boardMarginPix * 2) {
+  writeHeader();
 }
 
 SVGStencil::~SVGStencil() {
@@ -55,7 +56,7 @@ SVGStencil::~SVGStencil() {
 	this->ofs.close();
 }
 
-void SVGStencil::writeHeader(size_t widthPix, size_t heightPix) {
+void SVGStencil::writeHeader() {
 	this->ofs << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"<< std::endl;
 	this->ofs << "<svg " << std::endl;
 	this->ofs << "xmlns:dc=\"http://purl.org/dc/elements/1.1/\"" << std::endl;
@@ -64,18 +65,19 @@ void SVGStencil::writeHeader(size_t widthPix, size_t heightPix) {
 	this->ofs << "xmlns:svg=\"http://www.w3.org/2000/svg\"" << std::endl;
 	this->ofs << "xmlns=\"http://www.w3.org/2000/svg\"" << std::endl;
 	this->ofs << "version=\"1.1\"" << std::endl;
-	this->ofs << "width=\"" << widthPix << "\"" << std::endl;
-	this->ofs << "height=\"" << heightPix << "\"" << std::endl;
+	this->ofs << "width=\"" << realWidthPix << "\"" << std::endl;
+	this->ofs << "height=\"" << realHeightPix << "\"" << std::endl;
 	this->ofs << "id=\"svg2\">" << std::endl;
 	this->ofs << "<g id=\"layer1\">" << std::endl;
 
 	this->ofs << "<rect" << std::endl;
-	this->ofs << "width=\"" << widthPix << "\"" << std::endl;
-	this->ofs << "height=\"" << heightPix << "\"" << std::endl;
+	this->ofs << "width=\"" << realWidthPix << "\"" << std::endl;
+	this->ofs << "height=\"" << realHeightPix << "\"" << std::endl;
 	this->ofs << "x=\"0\"" << std::endl;
 	this->ofs << "y=\"0\"" << std::endl;
 	this->ofs << "id=\"-1\"" << std::endl;
 	this->ofs << "style=\"fill:none;stroke:#ff0000;stroke-width:0.09;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none\" />" << std::endl;
+	this->ofs << "<text x=\"0\" y=\"15\" fill=\"black\">" << "bla" << "</text>";
 }
 
 void SVGStencil::writeFooter() {
@@ -109,9 +111,12 @@ int main(int argc, char** argv) {
 
 	int i = 0;
 	for(auto it = pp.begin(); it != pp.end(); ++it) {
-		PixelList& pl = (*it).second;
+		const Color& color = (*it).first;
+	  PixelList& pl = (*it).second;
+
 		SVGStencil stencil((string(argv[1]) + std::to_string(i) + ".svg").c_str(),
-				pp.getWidth(),
+		    color,
+		    pp.getWidth(),
 				pp.getHeight(),
 				rectWidthMM,
 				rectMarginMM,
