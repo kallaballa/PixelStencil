@@ -77,7 +77,6 @@ void SVGStencil::writeHeader() {
 	this->ofs << "y=\"0\"" << std::endl;
 	this->ofs << "id=\"-1\"" << std::endl;
 	this->ofs << "style=\"fill:none;stroke:#ff0000;stroke-width:0.09;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none\" />" << std::endl;
-	this->ofs << "<text x=\"0\" y=\"15\" fill=\"black\">" << "bla" << "</text>";
 }
 
 void SVGStencil::writeFooter() {
