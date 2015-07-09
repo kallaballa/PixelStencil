@@ -6,7 +6,7 @@ TARGET  := pixelStencil.js
 else
 TARGET  := pixelStencil 
 endif
-SRCS    := PixelStencil.cpp
+SRCS    := PixelStencil.cpp NamedColorTable.cpp
 OBJS    := ${SRCS:.cpp=.o} 
 DEPS    := ${SRCS:.cpp=.dep} 
 

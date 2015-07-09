@@ -19,8 +19,10 @@
 
 #include "PixelStencil.hpp"
 #include <iostream>
+#include <iomanip>
 #include "math.h"
 #include "CImg.h"
+#include "NamedColorTable.hpp"
 
 namespace kallaballa {
 
@@ -40,7 +42,7 @@ PixelPlanes::PixelPlanes(char* filename) : img(filename), width(img.width()), he
 PixelPlanes::~PixelPlanes() {
 }
 
-SVGStencil::SVGStencil(const char* filename, Color color, size_t widthPix, size_t heightPix, size_t rectWidthMM, size_t rectMarginMM, size_t boardMarginMM) :
+SVGStencil::SVGStencil(const char* filename, NamedColor color, size_t widthPix, size_t heightPix, size_t rectWidthMM, size_t rectMarginMM, size_t boardMarginMM) :
 	ofs(filename),
 	color(color),
 	rectWidthPix(rectWidthMM * PIXEL_TO_MM),
@@ -77,6 +79,7 @@ void SVGStencil::writeHeader() {
 	this->ofs << "y=\"0\"" << std::endl;
 	this->ofs << "id=\"-1\"" << std::endl;
 	this->ofs << "style=\"fill:none;stroke:#ff0000;stroke-width:0.09;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none\" />" << std::endl;
+	this->ofs << "<text x=\"" << boardMarginPix / 2 << "\" y=\"" << boardMarginPix << "\" fill=\"#" << std::setfill('0') << std::setw(6) << std::hex << color.rgb << std::dec << "\" style=\"font-size:" << boardMarginPix / 2 << "px\" stroke=\"black\">" << color.name << "</text>" << std::endl;
 }
 
 void SVGStencil::writeFooter() {
@@ -103,6 +106,11 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
+	NamedColorTable ral;
+	ral.readFromCSV("colors.txt");
+/*	for(auto item : ral) {
+    std::cerr << std::dec << item.ral << "\t#" << std::setfill('0') << std::setw(6) << std::hex << item.rgb << '\t' << item.name << std::endl;
+	}*/
 	PixelPlanes pp(argv[1]);
 	size_t rectWidthMM = atoi(argv[2]);
 	size_t rectMarginMM = atoi(argv[3]);
@@ -111,10 +119,15 @@ int main(int argc, char** argv) {
 	int i = 0;
 	for(auto it = pp.begin(); it != pp.end(); ++it) {
 		const Color& color = (*it).first;
-	  PixelList& pl = (*it).second;
+    NamedColor sample;
+    sample.rgb = color;
+    auto nearest = ral.find_nearest(sample);
+		std::cerr << std::dec << int(nearest.second) << "\t#" << std::setfill('0') << std::setw(6) << std::hex << (*nearest.first).rgb << '\t' << color << '\t' << (*nearest.first).name << std::endl;
+
+		PixelList& pl = (*it).second;
 
 		SVGStencil stencil((string(argv[1]) + std::to_string(i) + ".svg").c_str(),
-		    color,
+		    *nearest.first,
 		    pp.getWidth(),
 				pp.getHeight(),
 				rectWidthMM,

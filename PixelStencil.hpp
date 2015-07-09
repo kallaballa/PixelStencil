@@ -29,6 +29,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include "NamedColor.hpp"
 
 namespace kallaballa
 {
@@ -76,7 +77,7 @@ public:
 
 class SVGStencil {
 	std::ofstream ofs;
-	Color color;
+	NamedColor color;
 	size_t rectWidthPix;
 	size_t rectMarginPix;
 	size_t boardMarginPix;
@@ -87,7 +88,7 @@ class SVGStencil {
 	void writeHeader();
 	void writeFooter();
 public:
-	SVGStencil(const char* filename, Color color, size_t width, size_t height, size_t rectWidth, size_t rectMargin, size_t boardMargin) ;
+	SVGStencil(const char* filename, NamedColor color, size_t width, size_t height, size_t rectWidth, size_t rectMargin, size_t boardMargin) ;
 	virtual ~SVGStencil();
 
 	void writePixel(size_t x, size_t y);
