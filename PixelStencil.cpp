@@ -98,7 +98,6 @@ void SVGStencil::writePixel(size_t x, size_t y) {
 } /* namespace kallaballa */
 
 int main(int argc, char** argv) {
-	using namespace cimg_library;
 	using namespace kallaballa;
 
 	if(argc != 5) {
