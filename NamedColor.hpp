@@ -22,7 +22,6 @@
 #define NAMEDCOLOR_HPP_
 
 #include <string>
-#include <stdint.h>
 #include "Color.hpp"
 
 namespace kallaballa
