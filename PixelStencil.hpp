@@ -42,7 +42,6 @@ using std::ostream;
 typedef unsigned char sample_t;
 typedef std::pair<int32_t,int32_t> Pixel;
 typedef std::vector<Pixel> PixelList;
-typedef uint32_t Color;
 typedef std::map<Color, std::vector<Pixel> > PixelMap;
 
 float PIXEL_TO_MM = 3.5434;

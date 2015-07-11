@@ -18,20 +18,15 @@
  */
 
 
-#ifndef NAMEDCOLOR_HPP_
-#define NAMEDCOLOR_HPP_
+#ifndef COLOR_HPP_
+#define COLOR_HPP_
 
-#include <string>
 #include <stdint.h>
-#include "Color.hpp"
 
 namespace kallaballa
 {
-  struct NamedColor {
-    Color rgb;
-    std::string name;
-  };
+  typedef uint32_t Color;
 }
 
 /* namespace kallaballa */
-#endif /* NAMEDCOLOR_HPP_ */
+#endif /* COLOR_HPP_ */
