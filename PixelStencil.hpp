@@ -78,17 +78,17 @@ public:
 class SVGStencil {
 	std::ofstream ofs;
 	NamedColor color;
-	size_t rectWidthPix;
-	size_t rectMarginPix;
+	size_t pixelWidthPix;
+	size_t pixelMarginPix;
 	size_t boardMarginPix;
   size_t realWidthPix;
   size_t realHeightPix;
-  size_t rectID = 0;
+  size_t pixelID = 0;
 
 	void writeHeader();
 	void writeFooter();
 public:
-	SVGStencil(const char* filename, NamedColor color, size_t width, size_t height, size_t rectWidth, size_t rectMargin, size_t boardMargin) ;
+	SVGStencil(const char* filename, NamedColor color, size_t widthPix, size_t heightPix, size_t pixelWidthMM, size_t pixelMarginMM, size_t boardMarginMM) ;
 	virtual ~SVGStencil();
 
 	void writePixel(size_t x, size_t y);

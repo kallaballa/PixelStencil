@@ -42,14 +42,14 @@ PixelPlanes::PixelPlanes(char* filename) : img(filename), width(img.width()), he
 PixelPlanes::~PixelPlanes() {
 }
 
-SVGStencil::SVGStencil(const char* filename, NamedColor color, size_t widthPix, size_t heightPix, size_t rectWidthMM, size_t rectMarginMM, size_t boardMarginMM) :
+SVGStencil::SVGStencil(const char* filename, NamedColor color, size_t widthPix, size_t heightPix, size_t pixelWidthMM, size_t pixelMarginMM, size_t boardMarginMM) :
 	ofs(filename),
 	color(color),
-	rectWidthPix(rectWidthMM * PIXEL_TO_MM),
-	rectMarginPix(rectMarginMM * PIXEL_TO_MM),
+	pixelWidthPix(pixelWidthMM * PIXEL_TO_MM),
+	pixelMarginPix(pixelMarginMM * PIXEL_TO_MM),
 	boardMarginPix(boardMarginMM * PIXEL_TO_MM),
-	realWidthPix(widthPix * rectWidthPix + widthPix * rectMarginPix + boardMarginPix * 2),
-	realHeightPix(heightPix * rectWidthPix + heightPix * rectMarginPix + boardMarginPix * 2) {
+	realWidthPix(widthPix * pixelWidthPix + widthPix * pixelMarginPix + boardMarginPix * 2),
+	realHeightPix(heightPix * pixelWidthPix + heightPix * pixelMarginPix + boardMarginPix * 2) {
   writeHeader();
 }
 
@@ -88,11 +88,11 @@ void SVGStencil::writeFooter() {
 
 void SVGStencil::writePixel(size_t x, size_t y) {
 	this->ofs << "<rect" << std::endl;
-	this->ofs << "width=\"" << rectWidthPix << "\"" << std::endl;
-	this->ofs << "height=\"" << rectWidthPix << "\"" << std::endl;
-	this->ofs << "x=\"" << boardMarginPix + rectWidthPix * x + rectMarginPix * x << "\"" << std::endl;
-	this->ofs << "y=\"" << boardMarginPix + rectWidthPix * y + rectMarginPix * y << "\"" << std::endl;
-	this->ofs << "id=\"" << rectID++ << "\"" << std::endl;
+	this->ofs << "width=\"" << pixelWidthPix << "\"" << std::endl;
+	this->ofs << "height=\"" << pixelWidthPix << "\"" << std::endl;
+	this->ofs << "x=\"" << boardMarginPix + pixelWidthPix * x + pixelMarginPix * x << "\"" << std::endl;
+	this->ofs << "y=\"" << boardMarginPix + pixelWidthPix * y + pixelMarginPix * y << "\"" << std::endl;
+	this->ofs << "id=\"" << pixelID++ << "\"" << std::endl;
 	this->ofs << "style=\"fill:none;stroke:#ff0000;stroke-width:0.09;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none\" />" << std::endl;
 }
 } /* namespace kallaballa */
@@ -108,30 +108,27 @@ int main(int argc, char** argv) {
 
 	NamedColorTable ral;
 	ral.readFromCSV("colors.txt");
-/*	for(auto item : ral) {
-    std::cerr << std::dec << item.ral << "\t#" << std::setfill('0') << std::setw(6) << std::hex << item.rgb << '\t' << item.name << std::endl;
-	}*/
 	PixelPlanes pp(argv[1]);
-	size_t rectWidthMM = atoi(argv[2]);
-	size_t rectMarginMM = atoi(argv[3]);
+	size_t pixelWidthMM = atoi(argv[2]);
+	size_t pixelMarginMM = atoi(argv[3]);
 	size_t boardMarginMM = atoi(argv[4]);
 
 	int i = 0;
 	for(auto it = pp.begin(); it != pp.end(); ++it) {
 		const Color& color = (*it).first;
+    const PixelList& pl = (*it).second;
+
     NamedColor sample;
     sample.rgb = color;
     auto nearest = ral.find_nearest(sample);
 		std::cerr << std::dec << int(nearest.second) << "\t#" << std::setfill('0') << std::setw(6) << std::hex << (*nearest.first).rgb << '\t' << color << '\t' << (*nearest.first).name << std::endl;
 
-		PixelList& pl = (*it).second;
-
 		SVGStencil stencil((string(argv[1]) + std::to_string(i) + ".svg").c_str(),
 		    *nearest.first,
 		    pp.getWidth(),
 				pp.getHeight(),
-				rectWidthMM,
-				rectMarginMM,
+				pixelWidthMM,
+				pixelMarginMM,
 				boardMarginMM);
 
 		for(auto it_l = pl.begin(); it_l != pl.end(); ++it_l) {
